@@ -32,27 +32,34 @@ readLisrel <- function(x)
   Mats <- list(
     ObsCov = grep("Covariance Matrix",Out),
     ImpCov = grep("Fitted Covariance Matrix",Out),
-    LambdaX = grep("LAMBDA-X",Out),
-    Phi = grep("PHI",Out),
-    ThetaDelta = grep("THETA-DELTA",Out),
-    Gamma = grep("GAMMA",Out),
-    LambdaY = grep("LAMBDA-Y",Out),
-    Psi = grep("PSI",Out),
-    ThetaEpsilon = grep("THETA-EPSILON",Out),
-    Beta = grep("BETA",Out)
+    LX = grep("LAMBDA-X",Out),
+    PH = grep("PHI",Out),
+    TD = grep("THETA-DELTA",Out),
+    GA = grep("GAMMA",Out),
+    LY = grep("LAMBDA-Y",Out),
+    PS = grep("PSI",Out),
+    TE = grep("THETA-EPSILON",Out),
+    BE = grep("BETA",Out)
   )
   
   Mats$ObsCov <- Mats$ObsCov[!Mats$ObsCov%in%Mats$ImpCov]
   
   ### EXTRACT MATRICES ###
-  for (mat in c("LambdaX","Phi","ThetaDelta","Gamma","LambdaY","Psi","ThetaEpsilon","Beta"))
+  for (mat in c("LX","PH","TD","GA","LY","PS","TE","BE"))
   {
     Res$matrices[[mat]] <- list()
     for (type in c("est","std","stdComp","parSpec"))
     {
       Res$matrices[[mat]][[type]] <- findMatrix(mat,type,Mats,Struc,Out)
+      if (type=="est")
+      {
+        Res$matrices[[mat]][['se']] <- Res$matrices[[mat]][[type]][['se']]
+        Res$matrices[[mat]][['t']] <- Res$matrices[[mat]][[type]][['t']]
+        Res$matrices[[mat]][[type]] <- Res$matrices[[mat]][[type]][['est']]
+      }
     }
   }
+
   
   Res$covariances$implied <- findCov("ImpCov",Mats,Out)
   Res$covariances$observed <- findCov("ObsCov",Mats,Out)

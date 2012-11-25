@@ -3,14 +3,14 @@ findMatrix <- function(mat,type,Mats,Struc,Out)
   StrucUL <- unlist(Struc)
   
   # Define LISREL name:
-  if (mat=="LambdaX") lisName <- "LAMBDA-X"
-  if (mat=="Phi") lisName <- "PHI"
-  if (mat=="ThetaDelta") lisName <- "THETA-DELTA"
-  if (mat=="Gamma") lisName <- "GAMMA"
-  if (mat=="LambdaY") lisName <- "LAMBDA-Y"
-  if (mat=="Psi") lisName <- "PSI"
-  if (mat=="ThetaEpsilon") lisName <- "THETA-EPSILON"
-  if (mat=="Beta") lisName <- "BETA"
+  if (mat=="LX") lisName <- "LAMBDA-X"
+  if (mat=="PH") lisName <- "PHI"
+  if (mat=="TD") lisName <- "THETA-DELTA"
+  if (mat=="GA") lisName <- "GAMMA"
+  if (mat=="LY") lisName <- "LAMBDA-Y"
+  if (mat=="PS") lisName <- "PSI"
+  if (mat=="TE") lisName <- "THETA-EPSILON"
+  if (mat=="BE") lisName <- "BETA"
 
   Res <- NULL
   
