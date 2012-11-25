@@ -1,5 +1,4 @@
-getMatrix <-
-function(x,name,diag=FALSE,symmetrical=FALSE,estimates)
+getMatrix <- function(x,name,diag=FALSE,symmetrical=FALSE,estimates)
 {
    
   # Make similar to readLines if length==1:

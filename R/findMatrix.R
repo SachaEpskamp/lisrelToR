@@ -1,5 +1,4 @@
-findMatrix <-
-function(mat,type)
+findMatrix <- function(mat,type)
 {
   # Define LISREL name:
   if (mat=="LambdaX") lisName <- "LAMBDA-X"

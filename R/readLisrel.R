@@ -1,5 +1,4 @@
-readLisrel <-
-function(x)
+readLisrel <- function(x)
 {
   
   # Read output:
