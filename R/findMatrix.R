@@ -26,7 +26,7 @@ findMatrix <- function(mat,type,Mats,Struc,Out)
         IndEnd <- IndEnd + 1
         if (Out[IndEnd]=="" & !grepl(lisName,Out[IndEnd+1]) & !grepl(lisName,Out[IndEnd-1])) break
       }
-      Res <- getMatrix(Out[IndStart:IndEnd],lisName,grepl("Theta",mat)|grepl("Psi",mat)|grepl("Phi",mat),grepl("Theta",mat)|grepl("Psi",mat)|grepl("Phi",mat))
+      Res <- getMatrix(Out[IndStart:IndEnd],lisName,mat %in% c("TD","TE","PS","PH"),mat %in% c("TD","TE","PS","PH"))
     }
   }
   return(Res)
