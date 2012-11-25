@@ -1,4 +1,4 @@
-findCov <- function(mat)
+findCov <- function(mat,Mats,Out)
 {
   # Define LISREL name:
   if (mat=="ObsCov") lisName <- "Covariance Matrix"

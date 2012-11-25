@@ -25,9 +25,8 @@ readLisrel <- function(x)
     stdComp = grep("Completely Standardized Solution",Out)
   )
   
-  StrucUL <- unlist(Struc)
-  
   Struc$std <- Struc$std[!Struc$std%in%Struc$stdComp]
+  StrucUL <- unlist(Struc)
   
   ### Find linenumbers of matrices:
   Mats <- list(
@@ -51,12 +50,12 @@ readLisrel <- function(x)
     Res$matrices[[mat]] <- list()
     for (type in c("est","std","stdComp","parSpec"))
     {
-      Res$matrices[[mat]][[type]] <- findMatrix(mat,type)
+      Res$matrices[[mat]][[type]] <- findMatrix(mat,type,Mats,Struc,Out)
     }
   }
   
-  Res$covariances$implied <- findCov("ImpCov")
-  Res$covariances$observed <- findCov("ObsCov")
+  Res$covariances$implied <- findCov("ImpCov",Mats,Out)
+  Res$covariances$observed <- findCov("ObsCov",Mats,Out)
   
   
   ### Extract fit statistics:

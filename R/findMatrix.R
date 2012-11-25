@@ -1,5 +1,7 @@
-findMatrix <- function(mat,type)
+findMatrix <- function(mat,type,Mats,Struc,Out)
 {
+  StrucUL <- unlist(Struc)
+  
   # Define LISREL name:
   if (mat=="LambdaX") lisName <- "LAMBDA-X"
   if (mat=="Phi") lisName <- "PHI"
