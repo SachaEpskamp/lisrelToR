@@ -107,7 +107,7 @@ getMatrix <- function(x,name,diag=FALSE,symmetrical=FALSE,estimates)
   if (diag)
   {
     nm <- colnames(Tab)
-    Tab <- diag(c(Tab))
+    Tab <- diag(c(Tab),length(Tab),length(Tab))
     rownames(Tab) <- colnames(Tab) <- nm
   }
   
@@ -131,8 +131,8 @@ getMatrix <- function(x,name,diag=FALSE,symmetrical=FALSE,estimates)
     # Diagonalize:
     if (diag)
     {      
-      seTab <- diag(c(seTab))
-      tTab <- diag(c(tTab))
+      seTab <- diag(c(seTab),length(seTab),length(seTab))
+      tTab <- diag(c(tTab),length(tTab),length(tTab))
     }
     colnames(seTab) <- colnames(tTab) <- colnames(Tab)
     rownames(seTab) <- rownames(tTab) <- rownames(Tab)

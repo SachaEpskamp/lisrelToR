@@ -4,19 +4,16 @@ findCov <- function(mat,Mats,Out)
   if (mat=="ObsCov") lisName <- "Covariance Matrix"
   if (mat=="ImpCov") lisName <- "Fitted Covariance Matrix"
   
-  Res <- NULL
+  Res <- list()
   
   if (length(Mats[[mat]]) > 0)
   {
-    IndStart <- min(Mats[[mat]])
-    # Find end:
-    IndEnd <- IndStart
-    repeat
+    for (g in seq_along(Mats[[mat]]))
     {
-      IndEnd <- IndEnd + 1
-      if (Out[IndEnd]=="" & !grepl(lisName,Out[IndEnd+1]) & !grepl(lisName,Out[IndEnd-1])) break
+      Inds <- matRange(Mats[[mat]][[g]],lisName,Out)
+      
+      Res[[g]] <- getMatrix(Out[Inds[1]:Inds[2]],lisName,TRUE,TRUE)
     }
-    Res <- getMatrix(Out[IndStart:IndEnd],lisName,TRUE,TRUE)
   }
   return(Res)
 }

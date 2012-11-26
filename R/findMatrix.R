@@ -1,4 +1,4 @@
-findMatrix <- function(mat,type,Mats,Struc,Out)
+findMatrix <- function(mat,type,Mats,Struc,Out,g)
 {
   StrucUL <- unlist(Struc)
   
@@ -9,24 +9,28 @@ findMatrix <- function(mat,type,Mats,Struc,Out)
   if (mat=="GA") lisName <- "GAMMA"
   if (mat=="LY") lisName <- "LAMBDA-Y"
   if (mat=="PS") lisName <- "PSI"
-  if (mat=="TE") lisName <- "THETA-EPSILON"
+  if (mat=="TE") lisName <- "THETA-EPS"
   if (mat=="BE") lisName <- "BETA"
-
-  Res <- NULL
+  if (mat=="TX") lisName <- "TAU-X"
+  if (mat=="TY") lisName <- "TAU-Y"
+  if (mat=="AL") lisName <- "ALPHA"
+  if (mat=="KA") lisName <- "KAPPA"
+  
+  Res <- list()
   
   if (length(Struc[[type]]) > 0 & length(Mats[[mat]]) > 0)
   {
-    IndStart <- min(Mats[[mat]][Mats[[mat]]>Struc[[type]][1]])
-    if (!any(StrucUL[StrucUL > Struc[[type]][1]] < IndStart))
+    IndStart <- min(Mats[[mat]][Mats[[mat]]>Struc[[type]][g]])
+    if (!any(StrucUL[StrucUL > Struc[[type]][g]] < IndStart))
     {
-      # Find end:
-      IndEnd <- IndStart
-      repeat
+      # Checn equal next group"
+      if (grepl(paste(lisName,"EQUALS",lisName,"IN THE FOLLOWING GROUP"),Out[IndStart]))
       {
-        IndEnd <- IndEnd + 1
-        if (Out[IndEnd]=="" & !grepl(lisName,Out[IndEnd+1]) & !grepl(lisName,Out[IndEnd-1])) break
+        Res <- "NextGroup"
+      } else {
+        Inds <- matRange(IndStart,lisName,Out)
+        Res <- getMatrix(Out[Inds[1]:Inds[2]],lisName,mat %in% c("TD","TE","PS","PH"),mat %in% c("TD","TE","PS","PH"))
       }
-      Res <- getMatrix(Out[IndStart:IndEnd],lisName,mat %in% c("TD","TE","PS","PH"),mat %in% c("TD","TE","PS","PH"))
     }
   }
   return(Res)

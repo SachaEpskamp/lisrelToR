@@ -6,7 +6,7 @@ readLisrel <- function(x)
   
   # Empty output structure (S3):
   Res <- list(
-    fitIndices = data.frame, # named character vector
+    fitIndices = list(), # list containing dataframes, 'global' and 'Group1'. 'Group2',...
     matrices = list( ), # List containing per matrix a list contaning 'est', 'par', 'se', 't' matrices
     variables = data.frame(), # data frame contaning information on each variable: manifest or latent and exo or endo.
     covariances = list(
@@ -38,50 +38,74 @@ readLisrel <- function(x)
     GA = grep("GAMMA",Out),
     LY = grep("LAMBDA-Y",Out),
     PS = grep("PSI",Out),
-    TE = grep("THETA-EPSILON",Out),
-    BE = grep("BETA",Out)
+    TE = grep("THETA-EPS",Out),
+    BE = grep("BETA",Out),
+    TX = grep("TAU-X",Out),
+    TY = grep("TAU-Y",Out),
+    AL = grep("ALPHA",Out),
+    KA = grep("KAPPA",Out)
   )
   
   Mats$ObsCov <- Mats$ObsCov[!Mats$ObsCov%in%Mats$ImpCov]
+
+  # Check for continued matrices:
+  for (i in 1:length(Mats))
+  {
+    if (length(Mats[[i]])>0)
+    {
+      Inds <- lapply(Mats[[i]],matRange,Out=Out)
+      Mats[[i]] <- Mats[[i]][!sapply(Mats[[i]],function(x)any(x>sapply(Inds,'[',1) & x<=sapply(Inds,'[',2)))]
+    }
+  }
   
   ### EXTRACT MATRICES ###
-  for (mat in c("LX","PH","TD","GA","LY","PS","TE","BE"))
+  for (mat in c("LX","PH","TD","GA","TX","KA","LY","PS","TE","BE","TY","AL"))
   {
     Res$matrices[[mat]] <- list()
     for (type in c("est","std","stdComp","parSpec"))
     {
-      Res$matrices[[mat]][[type]] <- findMatrix(mat,type,Mats,Struc,Out)
-      if (type=="est")
+      if (length(Struc[[type]])>0)
       {
-        Res$matrices[[mat]][['se']] <- Res$matrices[[mat]][[type]][['se']]
-        Res$matrices[[mat]][['t']] <- Res$matrices[[mat]][[type]][['t']]
-        Res$matrices[[mat]][[type]] <- Res$matrices[[mat]][[type]][['est']]
+        for (g in length(Struc[[type]]):1)
+        {
+          Res$matrices[[mat]][[g]] <- list()
+          Res$matrices[[mat]][[g]][[type]] <- findMatrix(mat,type,Mats,Struc,Out,g)
+          if (identical(Res$matrices[[mat]][[g]][[type]],"NextGroup"))
+          {
+            Res$matrices[[mat]][[g]][[type]] <- Res$matrices[[mat]][[g+1]][[type]]
+            if (type=="est")
+            {
+              Res$matrices[[mat]][[g]][['se']] <- Res$matrices[[mat]][[g+1]][['se']]
+              Res$matrices[[mat]][[g]][['t']] <- Res$matrices[[mat]][[g+1]][['t']]
+            }
+          } else if (type=="est")
+          {
+            Res$matrices[[mat]][[g]][['se']] <- Res$matrices[[mat]][[g]][[type]][['se']]
+            Res$matrices[[mat]][[g]][['t']] <- Res$matrices[[mat]][[g]][[type]][['t']]
+            Res$matrices[[mat]][[g]][[type]] <- Res$matrices[[mat]][[g]][[type]][['est']]
+          }
+        }
       }
     }
-  }
-
-  
+    names(Res$matrices[[mat]]) <- paste0("group",seq_along(Res$matrices[[mat]]))
+  }  
   Res$covariances$implied <- findCov("ImpCov",Mats,Out)
+  if (length(Res$covariances$implied)>0)  names(Res$covariances$implied) <- paste0("group",seq_along(Res$covariances$implied))
   Res$covariances$observed <- findCov("ObsCov",Mats,Out)
+  if (length(Res$covariances$observed)>0) names(Res$covariances$observed) <- paste0("group",seq_along(Res$covariances$observed))
   
-  
-  ### Extract fit statistics:
-  IndStart <- Struc$fit
-  # Find end:
-  IndEnd <- IndStart
-  repeat
-  {
-    IndEnd <- IndEnd + 1
-    if (!(grepl("\\s*",Out[IndEnd]) | grepl("=",Out[IndEnd]))) break
-  }
-  modTxt <- Out[IndStart:IndEnd]
-  modTxt <- modTxt[grepl("=",modTxt)]
-  modTxt <- strsplit(modTxt,split="=")
-  modTxt <- lapply(modTxt,gsub,pattern="^\\s*",replacement="")
-  modTxt <- lapply(modTxt,gsub,pattern="\\s*$",replacement="")
-  
-  Res$fitIndices <- data.frame(Statstic=sapply(modTxt,"[",1),Value=sapply(modTxt,"[",2))
-  
+#   
+#   if (length(Struc$fit)==1)
+#   {
+#     Res$fitIndices$global <- findFit(Out,Struc$fit)
+#   } else {
+#     Res$fitIndices$global <- findFit(Out,Struc$fit[grep("Global",Out[Struc$fit])])
+#     for (g in 1:(length(Struc$fit)-1))
+#     {
+#       Res$fitIndices[[paste0("group",g)]] <- findFit(Out,Struc$fit[grep("Group",Out[Struc$fit])[g]])
+#     }
+#   }
+#   
   # Return:
   return(Res)
 }
