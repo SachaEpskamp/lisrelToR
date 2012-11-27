@@ -16,7 +16,7 @@ findMatrix <- function(mat,type,Mats,Struc,Out,g)
   if (mat=="AL") lisName <- "ALPHA"
   if (mat=="KA") lisName <- "KAPPA"
   
-  Res <- list()
+  Res <- NULL
   
   if (length(Struc[[type]]) > 0 & length(Mats[[mat]]) > 0)
   {

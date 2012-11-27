@@ -58,17 +58,21 @@ readLisrel <- function(x)
     }
   }
   
+  # Extract number of groups from parSpec matrices:
+  Ng <- length(Struc$parSpec)
+  
   ### EXTRACT MATRICES ###
   for (mat in c("LX","PH","TD","GA","TX","KA","LY","PS","TE","BE","TY","AL"))
   {
     Res$matrices[[mat]] <- list()
-    for (type in c("est","std","stdComp","parSpec"))
+    for (g in Ng:1)
     {
-      if (length(Struc[[type]])>0)
+      Res$matrices[[mat]][[g]] <- list()
+      for (type in c("est","std","stdComp","parSpec"))
       {
-        for (g in length(Struc[[type]]):1)
+        if (length(Struc[[type]])>0)
         {
-          Res$matrices[[mat]][[g]] <- list()
+          if (length(Struc[[type]])!=Ng) warning(paste("Number of",type,"matrices are not equal to number of parameter specification matrices. Resulting multigroup structure will NOT be reliable"))
           Res$matrices[[mat]][[g]][[type]] <- findMatrix(mat,type,Mats,Struc,Out,g)
           if (identical(Res$matrices[[mat]][[g]][[type]],"NextGroup"))
           {

@@ -16,8 +16,11 @@ getMatrix <- function(x,name,diag=FALSE,symmetrical=FALSE,estimates)
     for (i in which(grepl("- -",x[-length(x)]) & grepl("\\(",x[-1])))
     {
       emLocs <- gregexpr("- -",x[i])[[1]]
-      substring(x[i+1],emLocs,emLocs+2) <- "- -"
-      substring(x[i+2],emLocs,emLocs+2) <- "- -"
+      for (j in 1:length(emLocs))
+      {
+        substring(x[i+1],emLocs[j],emLocs[j]+2) <- "- -"
+        substring(x[i+2],emLocs[j],emLocs[j]+2) <- "- -"
+      }
     }
   }
   
