@@ -1,6 +1,5 @@
 getMatrix <- function(x,name,diag=FALSE,symmetrical=FALSE,estimates)
 {
-   
   # Make similar to readLines if length==1:
   if (length(x)==1) x <- strsplit(x,split="\n")[[1]]
   
@@ -65,11 +64,13 @@ getMatrix <- function(x,name,diag=FALSE,symmetrical=FALSE,estimates)
       Xse[[i]] <- Xse[[i]][-c(seLocs[[i]]-1,seLocs[[i]]+1)]
       Xse[[i]] <- gsub("\\(|\\)","",Xse[[i]])
       Xse[[i]] <- Xse[[i]][-1]
+      Xse[[i]] <- c(X[[i]][1],Xse[[i]])
   
       Xt[[i]][-(seLocs[[i]]+1)] <- gsub("^.+? ","",Xt[[i]][-(seLocs[[i]]+1)])
       Xt[[i]][-(seLocs[[i]]+1)] <- gsub("[^ ]+","NA",Xt[[i]][-(seLocs[[i]]+1)])
       Xt[[i]] <- Xt[[i]][-c(seLocs[[i]]-1,seLocs[[i]])]
       Xt[[i]] <- Xt[[i]][-1]
+      Xt[[i]] <- c(X[[i]][1],Xt[[i]])
       
       X[[i]] <- X[[i]][-c(seLocs[[1]],seLocs[[1]]+1)]
     }
@@ -92,7 +93,7 @@ getMatrix <- function(x,name,diag=FALSE,symmetrical=FALSE,estimates)
     totR <- nrow(Tabs[[1]])
     for (i in 2:length(Tabs))
     {
-      Tabs[[2]] <- rbind(matrix(NA,totR-nrow(Tabs[[2]]),ncol(Tabs[[2]])),Tabs[[2]])
+      Tabs[[i]] <- rbind(matrix(NA,totR-nrow(Tabs[[i]]),ncol(Tabs[[i]])),Tabs[[i]])
       if (estimates)
       {
         Xse[[i]] <- c(rep(NA,totR-length(Xse[[i]])),Xse[[i]])
@@ -125,10 +126,10 @@ getMatrix <- function(x,name,diag=FALSE,symmetrical=FALSE,estimates)
   # Compute SE and t-value matrices if needed:
   if (estimates)
   {
-    seTabs <- lapply(Xse,function(txt)as.matrix(read.table(text=txt,header=FALSE,fill=TRUE)))
+    seTabs <- lapply(Xse,function(txt)as.matrix(read.table(text=txt,header=TRUE,fill=TRUE)))
     seTab <- do.call(cbind,seTabs)
   
-    tTabs <- lapply(Xt,function(txt)as.matrix(read.table(text=txt,header=FALSE,fill=TRUE)))
+    tTabs <- lapply(Xt,function(txt)as.matrix(read.table(text=txt,header=TRUE,fill=TRUE)))
     tTab <- do.call(cbind,tTabs)
         
     # Diagonalize:

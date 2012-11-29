@@ -12,8 +12,10 @@ readLisrel <- function(x)
     covariances = list(
       implied = NULL, # model Implied covariance matrix
       observed = NULL # observed covariance matrix
-    )
+    ),
+    output = Out
   )
+  class(Res) <- "lisrel"
   
   ### Find linenumbers of output structure:
   Struc <- list(
@@ -30,8 +32,8 @@ readLisrel <- function(x)
   
   ### Find linenumbers of matrices:
   Mats <- list(
-    ObsCov = grep("Covariance Matrix",Out),
-    ImpCov = grep("Fitted Covariance Matrix",Out),
+    ObsCov = grep("^\\s*Covariance Matrix\\s*$",Out),
+    ImpCov = grep("^\\s*Fitted Covariance Matrix\\s*$",Out),
     LX = grep("LAMBDA-X",Out),
     PH = grep("PHI",Out),
     TD = grep("THETA-DELTA",Out),
@@ -82,7 +84,7 @@ readLisrel <- function(x)
               Res$matrices[[mat]][[g]][['se']] <- Res$matrices[[mat]][[g+1]][['se']]
               Res$matrices[[mat]][[g]][['t']] <- Res$matrices[[mat]][[g+1]][['t']]
             }
-          } else if (type=="est")
+          } else if (type=="est" & is.list(Res$matrices[[mat]][[g]][[type]]))
           {
             Res$matrices[[mat]][[g]][['se']] <- Res$matrices[[mat]][[g]][[type]][['se']]
             Res$matrices[[mat]][[g]][['t']] <- Res$matrices[[mat]][[g]][[type]][['t']]
@@ -93,6 +95,7 @@ readLisrel <- function(x)
     }
     names(Res$matrices[[mat]]) <- paste0("group",seq_along(Res$matrices[[mat]]))
   }  
+
   Res$covariances$implied <- findCov("ImpCov",Mats,Out)
   if (length(Res$covariances$implied)>0)  names(Res$covariances$implied) <- paste0("group",seq_along(Res$covariances$implied))
   Res$covariances$observed <- findCov("ObsCov",Mats,Out)

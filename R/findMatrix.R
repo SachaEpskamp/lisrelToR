@@ -18,7 +18,7 @@ findMatrix <- function(mat,type,Mats,Struc,Out,g)
   
   Res <- NULL
   
-  if (length(Struc[[type]]) > 0 & length(Mats[[mat]]) > 0)
+  if (length(Struc[[type]]) > 0 & length(Mats[[mat]]) > 0 & any(Mats[[mat]]>Struc[[type]][g]))
   {
     IndStart <- min(Mats[[mat]][Mats[[mat]]>Struc[[type]][g]])
     if (!any(StrucUL[StrucUL > Struc[[type]][g]] < IndStart))
