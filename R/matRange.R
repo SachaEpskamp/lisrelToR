@@ -8,7 +8,8 @@ matRange <- function(start,lisName,Out)
   repeat
   {
     IndEnd <- IndEnd + 1
-    if (Out[IndEnd]=="" & !grepl(lisName,Out[IndEnd+1]) & !grepl(lisName,Out[IndEnd-1])) break
+    if (length(Out)==IndEnd) break
+    if (Out[IndEnd]=="" & !grepl(lisName,Out[IndEnd+1]) & !grepl(lisName,Out[IndEnd-1]) & !grepl(" Note:",Out[IndEnd-1],ignore.case=TRUE)) break
   }
   return(c(start,IndEnd))
 }

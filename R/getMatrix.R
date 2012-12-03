@@ -48,8 +48,9 @@ getMatrix <- function(x,name,diag=FALSE,symmetrical=FALSE,estimates)
     }
   }
   
-  # Remove second line:
+  # Remove second line and note lines:
   X <- lapply(X,'[',-2)
+  X <- lapply(X,function(x)x[!grepl("Note:",x,ignore.case=TRUE)])
   
   ## If estimate matrix, remove standard errors and t-values:
   if (estimates)
