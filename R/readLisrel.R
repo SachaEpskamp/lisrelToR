@@ -93,13 +93,13 @@ readLisrel <- function(x)
         }
       }
     }
-    names(Res$matrices[[mat]]) <- paste0("group",seq_along(Res$matrices[[mat]]))
+    names(Res$matrices[[mat]]) <- paste("group",seq_along(Res$matrices[[mat]]),sep="")
   }  
 
   Res$covariances$implied <- findCov("ImpCov",Mats,Out)
-  if (length(Res$covariances$implied)>0)  names(Res$covariances$implied) <- paste0("group",seq_along(Res$covariances$implied))
+  if (length(Res$covariances$implied)>0)  names(Res$covariances$implied) <- paste("group",seq_along(Res$covariances$implied),sep="")
   Res$covariances$observed <- findCov("ObsCov",Mats,Out)
-  if (length(Res$covariances$observed)>0) names(Res$covariances$observed) <- paste0("group",seq_along(Res$covariances$observed))
+  if (length(Res$covariances$observed)>0) names(Res$covariances$observed) <- paste("group",seq_along(Res$covariances$observed),sep="")
   
 #   
 #   if (length(Struc$fit)==1)
@@ -109,7 +109,7 @@ readLisrel <- function(x)
 #     Res$fitIndices$global <- findFit(Out,Struc$fit[grep("Global",Out[Struc$fit])])
 #     for (g in 1:(length(Struc$fit)-1))
 #     {
-#       Res$fitIndices[[paste0("group",g)]] <- findFit(Out,Struc$fit[grep("Group",Out[Struc$fit])[g]])
+#       Res$fitIndices[[paste("group",g,sep="")]] <- findFit(Out,Struc$fit[grep("Group",Out[Struc$fit])[g]])
 #     }
 #   }
 #   
