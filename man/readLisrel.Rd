@@ -95,6 +95,16 @@ lisrelMatrix(Lis,"LY", group = 2)
 
 # Structure of object:
 str(Lis)
+
+# Plot path diagram (using semPlot)
+layout(t(1:2))
+plot(Lis, ask = FALSE, as.expression = "edges")
+
+# Parameters (using semPlot repressentation):
+summary(Lis)
+
+# Print full LISREL output to console:
+print(Lis)
 }
 
 \seealso{
