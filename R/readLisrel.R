@@ -24,10 +24,14 @@ readLisrel <- function(x)
     fit = grep("Goodness of Fit Statistics",Out),
     modInd = grep("Modification Indices and Expected Change",Out),
     std = grep("Standardized Solution",Out),
-    stdComp = grep("Completely Standardized Solution",Out)
+    stdComp = grep("Completely Standardized Solution",Out),
+    stdcommet = grep("Common Metric Standardized Solution",Out),
+    stdcommetComp = grep("Common Metric Completely Standardized Solution",Out)
   )
   
-  Struc$std <- Struc$std[!Struc$std%in%Struc$stdComp]
+  Struc$std <- Struc$std[!Struc$std%in%c(Struc$stdComp,Struc$stdcommet,Struc$stdcommetComp)]
+  Struc$stdComp <- Struc$stdComp[!Struc$stdComp%in%Struc$stdcommetComp]
+  
   StrucUL <- unlist(Struc)
   
   ### Find linenumbers of matrices:
@@ -70,7 +74,7 @@ readLisrel <- function(x)
     for (g in Ng:1)
     {
       Res$matrices[[mat]][[g]] <- list()
-      for (type in c("est","std","stdComp","parSpec"))
+      for (type in c("est","std","stdComp","stdcommet","stdcommetComp","parSpec"))
       {
         if (length(Struc[[type]])>0)
         {
