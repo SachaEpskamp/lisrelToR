@@ -16,6 +16,7 @@ readLisrel <- function(x)
     output = Out
   )
   class(Res) <- "lisrel"
+  class(Res$matrices) <- c("list","semMatrixModel")
   
   ### Find linenumbers of output structure:
   Struc <- list(
