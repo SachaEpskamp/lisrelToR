@@ -1,3 +1,6 @@
+Changes in Version 0.1.4
+  o Fixed a bug with default names (ETA 1, VAR 3, etcetera) causing unexpected results.
+
 Changes in Version 0.1.3
   o semPlot suggest removed to avoid the cyclic dependency behavior.
   o summary and plot method removed. Will be added in 'semPlot' in a future update.

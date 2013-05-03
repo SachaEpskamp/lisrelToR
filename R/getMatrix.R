@@ -1,5 +1,11 @@
 getMatrix <- function(x,name,diag=FALSE,symmetrical=FALSE,estimates)
 {
+  ### Fix default naming:
+  x <- gsub("VAR (?=\\d)","VAR",x,perl=TRUE)
+  x <- gsub("ETA (?=\\d)","ETA",x,perl=TRUE)
+  x <- gsub("KSI (?=\\d)","KSI",x,perl=TRUE)
+  
+  
   xorig <- x
   # Make similar to readLines if length==1:
   if (length(x)==1) x <- strsplit(x,split="\n")[[1]]
