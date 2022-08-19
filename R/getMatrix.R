@@ -1,5 +1,6 @@
 getMatrix <- function(x,name,diag=FALSE,symmetrical=FALSE,estimates)
 {
+  # browser()
   ### Fix default naming:
   x <- gsub("VAR (?=\\d)","VAR",x,perl=TRUE)
   x <- gsub("ETA (?=\\d)","ETA",x,perl=TRUE)
@@ -33,6 +34,13 @@ getMatrix <- function(x,name,diag=FALSE,symmetrical=FALSE,estimates)
       {
         substring(x[i+1],emLocs[j],emLocs[j]+2) <- "- -"
         substring(x[i+2],emLocs[j],emLocs[j]+2) <- "- -"
+        
+        # Check if CI is included (new LISREL verson) and add more:
+        if (grepl(";",x[i+1])){
+          substring(x[i+3],emLocs[j],emLocs[j]+2) <- "- -"
+          substring(x[i+4],emLocs[j],emLocs[j]+2) <- "- -"
+          substring(x[i+5],emLocs[j],emLocs[j]+2) <- "- -"
+        }
       }
     }
   }
@@ -69,25 +77,50 @@ getMatrix <- function(x,name,diag=FALSE,symmetrical=FALSE,estimates)
   ## If estimate matrix, remove standard errors and t-values:
   if (estimates)
   {
-    seLocs <- lapply(X,function(x)grep("\\(",x))
+    
+    # Detect if CI is added (also assume then p-value is added):
+    CIs <- sapply(X,function(xx)any(grepl(";$",xx)))
+    
+    seLocs <- lapply(X,function(x)grep("\\(\\d*\\.?\\d*\\)",x))
     Xse <- X
     Xt <- X
     for (i in 1:length(X))
     {
-      Xse[[i]][-seLocs[[i]]] <- gsub("^.+? ","",Xse[[i]][-seLocs[[i]]])
-      Xse[[i]][-seLocs[[i]]] <- gsub("[^ ]+","NA",Xse[[i]][-seLocs[[i]]])
-      Xse[[i]] <- Xse[[i]][-c(seLocs[[i]]-1,seLocs[[i]]+1)]
-      Xse[[i]] <- gsub("\\(|\\)","",Xse[[i]])
-      Xse[[i]] <- Xse[[i]][-1]
-      Xse[[i]] <- c(X[[i]][1],Xse[[i]])
-  
-      Xt[[i]][-(seLocs[[i]]+1)] <- gsub("^.+? ","",Xt[[i]][-(seLocs[[i]]+1)])
-      Xt[[i]][-(seLocs[[i]]+1)] <- gsub("[^ ]+","NA",Xt[[i]][-(seLocs[[i]]+1)])
-      Xt[[i]] <- Xt[[i]][-c(seLocs[[i]]-1,seLocs[[i]])]
-      Xt[[i]] <- Xt[[i]][-1]
-      Xt[[i]] <- c(X[[i]][1],Xt[[i]])
+      if (CIs[i]){
+        # New behavior:
+        Xse[[i]][-seLocs[[i]]] <- gsub("^.+? ","",Xse[[i]][-seLocs[[i]]])
+        Xse[[i]][-seLocs[[i]]] <- gsub("[^ ]+","NA",Xse[[i]][-seLocs[[i]]])
+        Xse[[i]] <- Xse[[i]][-c(seLocs[[i]]-3,seLocs[[i]]-2,seLocs[[i]]-1,seLocs[[i]]+1,seLocs[[i]]+2)]
+        Xse[[i]] <- gsub("\\(|\\)","",Xse[[i]])
+        Xse[[i]] <- Xse[[i]][-1]
+        Xse[[i]] <- c(X[[i]][1],Xse[[i]])
+        
+        Xt[[i]][-(seLocs[[i]]+1)] <- gsub("^.+? ","",Xt[[i]][-(seLocs[[i]]+1)])
+        Xt[[i]][-(seLocs[[i]]+1)] <- gsub("[^ ]+","NA",Xt[[i]][-(seLocs[[i]]+1)])
+        Xt[[i]] <- Xt[[i]][-c(seLocs[[i]]-3,seLocs[[i]]-2,seLocs[[i]]-1,seLocs[[i]],seLocs[[i]]+2)]
+        Xt[[i]] <- Xt[[i]][-1]
+        Xt[[i]] <- c(X[[i]][1],Xt[[i]])
+        
+        X[[i]] <- X[[i]][-c(seLocs[[i]]-2,seLocs[[i]]-1,seLocs[[i]],seLocs[[i]]+1,seLocs[[i]]+2)]
+        
+      } else {
+        # Old behavior:
+        Xse[[i]][-seLocs[[i]]] <- gsub("^.+? ","",Xse[[i]][-seLocs[[i]]])
+        Xse[[i]][-seLocs[[i]]] <- gsub("[^ ]+","NA",Xse[[i]][-seLocs[[i]]])
+        Xse[[i]] <- Xse[[i]][-c(seLocs[[i]]-1,seLocs[[i]]+1)]
+        Xse[[i]] <- gsub("\\(|\\)","",Xse[[i]])
+        Xse[[i]] <- Xse[[i]][-1]
+        Xse[[i]] <- c(X[[i]][1],Xse[[i]])
+        
+        Xt[[i]][-(seLocs[[i]]+1)] <- gsub("^.+? ","",Xt[[i]][-(seLocs[[i]]+1)])
+        Xt[[i]][-(seLocs[[i]]+1)] <- gsub("[^ ]+","NA",Xt[[i]][-(seLocs[[i]]+1)])
+        Xt[[i]] <- Xt[[i]][-c(seLocs[[i]]-1,seLocs[[i]])]
+        Xt[[i]] <- Xt[[i]][-1]
+        Xt[[i]] <- c(X[[i]][1],Xt[[i]])
+        
+        X[[i]] <- X[[i]][-c(seLocs[[i]],seLocs[[i]]+1)]
+      }
       
-      X[[i]] <- X[[i]][-c(seLocs[[i]],seLocs[[i]]+1)]
     }
   }
   

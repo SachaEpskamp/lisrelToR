@@ -29,6 +29,7 @@ findMatrix <- function(mat,type,Mats,Struc,Out,g)
         Res <- "NextGroup"
       } else {
         Inds <- matRange(IndStart,lisName,Out)
+        # browser()
         Res <- getMatrix(Out[Inds[1]:Inds[2]],lisName,mat %in% c("TD","TE","PS","PH"),mat %in% c("TD","TE","PS","PH"))
       }
     }

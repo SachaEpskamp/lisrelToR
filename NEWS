@@ -1,3 +1,6 @@
+Changes in Version 0.2
+  o Fixed bugs with CIs and p-values included
+  
 Changes in Version 0.1.4
   o Fixed a bug with default names (ETA 1, VAR 3, etcetera) causing unexpected results.
 

@@ -1,5 +1,6 @@
 readLisrel <- function(x)
 {
+  # browser()
   
   # Read output:
   Out <- readLines(x)
